@@ -19,7 +19,7 @@ extern "C" { /* for inclusion from C++ */
 #define FILE_NAME                       "heap.log"
 #define BILLION 1000000000L
 #define INLINE                        __attribute__((always_inline))
-#define PROPRIETARY_LOGGING 1
+#define PROPRIETARY_LOGGING 0
 extern bool reader_end_flag;
 struct ringbuff_cell {
         uint32_t curr_heap_size;
