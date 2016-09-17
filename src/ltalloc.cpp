@@ -92,7 +92,6 @@ static const unsigned int MAX_BLOCK_SIZE = CHUNK_SIZE;
     r = CODE3264(__builtin_clz(v) ^ 31, __builtin_clzll(v) ^ 63)
 // x ^ 31 = 31 - x, but gcc does not optimize 31 - __builtin_clz(x) to bsr(x),
 // but generates 31 - (bsr(x) ^ 31)
-
 #else
 #error Unsupported compiler
 #endif
@@ -1040,7 +1039,7 @@ void *ltrealloc(void *ptr, size_t sz)
     return nptr;
 }
 
-size_t get_actual_info(void *p) 
+size_t get_actual_mem_size(void *p) 
 {
     if (likely((uintptr_t)p & (CHUNK_SIZE-1))) {
         size_t sizeClass = ((Chunk *)((uintptr_t) p & ~(CHUNK_SIZE-1)))->sizeClass;

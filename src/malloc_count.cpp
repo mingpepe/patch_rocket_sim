@@ -84,7 +84,9 @@ pthread_t reader_thread_id;
 static struct ringbuffer rb_buffer;
 #define EQUAL(a,b) ((a)==(b))
 static bool g_record_flag = true;
-
+/* function pointer to the real procedures, loaded using dlsym */
+typedef size_t (*get_mem_size_type)(void *p);
+static get_mem_size_type real_get_mem_size = NULL;
 
 /* add allocation to statistics */
 static void inc_count(size_t inc)
@@ -203,7 +205,7 @@ extern void* malloc(size_t size)
 
         /* Record real memory allocate size */
 #ifdef LTALLOC  
-        size_t actual_size = 0;//get_actual_info(ret);
+        size_t actual_size = real_get_mem_size(ret);
         fragper = (double)(actual_size - (alignment + size))/(double)(alignment + size);
         var_count = (fragper > last_fragper)? (fragper - last_fragper) : (last_fragper - fragper);
 #else
@@ -432,6 +434,13 @@ static void load_dynamic_lib() {
         fprintf(stderr, "error %s\n", error);
         exit(EXIT_FAILURE);
     }
+
+    real_get_mem_size = (get_mem_size_type)dlsym(handle, "_Z19get_actual_mem_sizePv");
+    if ((error = dlerror()) != NULL) {
+        fprintf(stderr, "error %s\n", error);
+        exit(EXIT_FAILURE);
+    }
+
 #endif /* LTALLOC */
 
 #ifdef SCALLOC  
@@ -461,7 +470,7 @@ static void load_dynamic_lib() {
         exit(EXIT_FAILURE);
     }
 
-    real_free = (free_type)dlsym(handle, "scalloc_free");
+    real_free = (get_mem_info_type)dlsym(handle, "scalloc_free");
     if ((error = dlerror()) != NULL) {
         fprintf(stderr, "error %s\n", error);
         exit(EXIT_FAILURE);
