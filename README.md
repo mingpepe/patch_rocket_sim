@@ -19,3 +19,8 @@ User Guide
 ### Scalloc User
 - Execute **./patch_rocket_sim/scalloc_config.sh** under the **rocket-sim/** before build the code.
 - **make tm=scalloc**
+
+### PROPRIETARY_LOGGING
+- When you need the extra memory profile information, you need change the **PROPRIETARY_LOGGING** to **1**.  
+This define is in ringbuffer.h.  
+- This feature author is [whosyourdadd](https://github.com/whosyourdadd)
