@@ -206,11 +206,11 @@ extern void* malloc(size_t size)
         /* Record real memory allocate size */
 #ifdef LTALLOC  
         size_t actual_size = real_get_mem_size(ret);
-        fragper = (double)(actual_size - (alignment + size))/(double)(alignment + size);
+        fragper = (double)(actual_size - (alignment + size))/(double)actual_size;
         var_count = (fragper > last_fragper)? (fragper - last_fragper) : (last_fragper - fragper);
 #else
         size_t actual_size = malloc_usable_size(ret);
-        fragper = (double)(actual_size - (alignment + size))/(double)(alignment + size);
+        fragper = (double)(actual_size - (alignment + size))/(double)actual_size;
         var_count = (fragper > last_fragper)? (fragper -last_fragper) : (last_fragper - fragper);   
 #endif
         if(diff_in_second(last_ts, temp.timestamp) > 60 |
